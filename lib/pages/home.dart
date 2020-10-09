@@ -6,11 +6,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  onItemPress(BuildContext context, int index){
+  onItemPress(BuildContext context, int index) {
     print('index: ${index.toString()}');
 
-    switch(index){
+    switch (index) {
       case 0:
         //pay via new card
         break;
@@ -30,11 +29,11 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         padding: EdgeInsets.all(20),
         child: ListView.separated(
-          itemBuilder: (context, index){
+          itemBuilder: (context, index) {
             Icon icon;
             Text text;
 
-            switch(index){
+            switch (index) {
               case 0:
                 icon = Icon(Icons.add_circle, color: theme.primaryColor);
                 text = Text("Pay via new card");
@@ -46,7 +45,9 @@ class _HomePageState extends State<HomePage> {
             }
 
             return InkWell(
-              onTap:(){onItemPress(context, index);},
+              onTap: () {
+                onItemPress(context, index);
+              },
               child: ListTile(
                 title: text,
                 leading: icon,
