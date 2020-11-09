@@ -20,6 +20,9 @@ class StripeService {
   }
 
   static StripeTransactionResponse payWithNewCard({String amount, String currency}){
-
+    return StripeTransactionResponse(
+      message: 'Transaction successful',
+      success: true,
+    );
   }
 }
