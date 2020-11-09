@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe_payments/services/payment-service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,11 +8,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   onItemPress(BuildContext context, int index) {
-    print('index: ${index.toString()}');
-
     switch (index) {
       case 0:
-        //pay via new card
+        var response = StripeService.payWithNewCard(
+          amount: '150',
+          currency: 'USD',
+        );
+        if(response.success == true){
+          Scaffold.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              duration: Duration(milliseconds: 1200),
+            )
+          );
+        }
         break;
       case 1:
         Navigator.pushNamed(context, '/existing-cards');
@@ -24,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Choose existing card"),
+        title: Text("Home"),
       ),
       body: Container(
         padding: EdgeInsets.all(20),

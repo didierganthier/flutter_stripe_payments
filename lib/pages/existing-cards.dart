@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_widget.dart';
+import 'package:flutter_stripe_payments/services/payment-service.dart';
 
 class ExistingCardsPage extends StatefulWidget {
   @override
@@ -25,7 +26,19 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
   ];
 
   payViaExistingCard(BuildContext context, card){
-
+    var response = StripeService.payViaExistingCard(
+      amount: '150',
+      currency: 'USD',
+      card: card,
+    );
+    if(response.success == true){
+      Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            duration: Duration(milliseconds: 1200),
+          )
+      ).closed.then((_) => Navigator.pop(context));
+    }
   }
 
   @override
