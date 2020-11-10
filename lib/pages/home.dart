@@ -7,10 +7,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  onItemPress(BuildContext context, int index) {
+  onItemPress(BuildContext context, int index) async {
     switch (index) {
       case 0:
-        var response = StripeService.payWithNewCard(
+        var response = await StripeService.payWithNewCard(
           amount: '150',
           currency: 'USD',
         );
@@ -27,6 +27,12 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushNamed(context, '/existing-cards');
         break;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    StripeService.init();
   }
 
   @override

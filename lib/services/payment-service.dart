@@ -1,3 +1,5 @@
+import 'package:stripe_payment/stripe_payment.dart';
+
 class StripeTransactionResponse {
   String message;
   bool success;
@@ -9,7 +11,13 @@ class StripeService {
   static String secret = '';
 
   static init(){
-
+    StripePayment.setOptions(
+        StripeOptions(
+            publishableKey: "pk_test_51Hm2SKIIBWMqfojFMxCgZiBx5PWNFQTtbSJwu4Gy55LB476DvjEpRQVgWEuQIGAQJ8W8BsVniYLYl2ToNU64P5zF00s1Sju7Bs",
+            merchantId: "Test",
+            androidPayMode: 'test'
+        )
+    );
   }
 
   static StripeTransactionResponse payViaExistingCard({String amount, String currency, card}){
@@ -19,10 +27,21 @@ class StripeService {
     );
   }
 
-  static StripeTransactionResponse payWithNewCard({String amount, String currency}){
-    return StripeTransactionResponse(
-      message: 'Transaction successful',
-      success: true,
-    );
+  static Future <StripeTransactionResponse> payWithNewCard({String amount, String currency}) async{
+    try {
+      var paymentMethod = await StripePayment.paymentRequestWithCardForm(
+        CardFormPaymentRequest()
+      );
+      print(paymentMethod);
+      return StripeTransactionResponse(
+        message: 'Transaction successful',
+        success: true,
+      );
+    } catch (err) {
+      return StripeTransactionResponse(
+        message: 'Transaction successful',
+        success: true,
+      );
+    }
   }
 }
