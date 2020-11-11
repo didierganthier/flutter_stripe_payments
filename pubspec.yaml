@@ -16,6 +16,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   stripe_payment: ^1.0.8
   http: ^0.12.2
+  progress_dialog: ^1.2.4
 
 dev_dependencies:
   flutter_test:
