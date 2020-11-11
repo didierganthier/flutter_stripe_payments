@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:stripe_payment/stripe_payment.dart';
 
 class StripeTransactionResponse {
@@ -32,7 +34,7 @@ class StripeService {
       var paymentMethod = await StripePayment.paymentRequestWithCardForm(
         CardFormPaymentRequest()
       );
-      print(paymentMethod);
+      print(jsonEncode(paymentMethod));
       return StripeTransactionResponse(
         message: 'Transaction successful',
         success: true,
@@ -43,5 +45,9 @@ class StripeService {
         success: true,
       );
     }
+  }
+
+  static createPaymentIntent(String amount, String currency) async {
+
   }
 }
