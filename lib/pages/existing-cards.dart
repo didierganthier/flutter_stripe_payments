@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_widget.dart';
 import 'package:flutter_stripe_payments/services/payment-service.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class ExistingCardsPage extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
     {
       'cardNumber': '4242424242424242',
       'expiryDate': '04/24',
-      'cardHolderName': 'Muhammad Ahsan Ayaz',
+      'cardHolderName': 'Didier Peran Ganthier',
       'cvvCode': '424',
       'showBackView': false,
     },
@@ -25,20 +26,23 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
     }
   ];
 
-  payViaExistingCard(BuildContext context, card){
-    var response = StripeService.payViaExistingCard(
-      amount: '150',
-      currency: 'USD',
-      card: card,
+  payViaExistingCard(BuildContext context, card) async {
+    var expiryArr = card['expiryDate'].split('/');
+    CreditCard stripeCard = CreditCard(
+      number: card['cardNumber'],
+      expMonth: int.parse(expiryArr[0]),
+      expYear: int.parse(expiryArr[1]),
     );
-    if(response.success == true){
-      Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            duration: Duration(milliseconds: 1200),
-          )
-      ).closed.then((_) => Navigator.pop(context));
-    }
+    var response = await StripeService.payViaExistingCard(
+      amount: '2500',
+      currency: 'USD',
+      card: stripeCard,
+    );
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(
+          content: Text(response.message),
+          duration: Duration(milliseconds: 1200),
+        )).closed.then((_) => Navigator.pop(context));
   }
 
   @override
@@ -54,7 +58,7 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
           itemBuilder: (BuildContext context, int index) {
             var card = cards[index];
             return InkWell(
-              onTap:(){
+              onTap: () {
                 payViaExistingCard(context, card);
               },
               child: CreditCardWidget(
