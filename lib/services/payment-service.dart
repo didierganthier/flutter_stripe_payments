@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:stripe_payment/stripe_payment.dart';
 
 class StripeTransactionResponse {
@@ -10,7 +10,12 @@ class StripeTransactionResponse {
 
 class StripeService {
   static String apiBase = 'https://api.stripe.com//v1';
-  static String secret = '';
+  static String paymentApiUrl = '${StripeService.apiBase}/payment_intents';
+  static String secret = 'sk_test_51Hm2SKIIBWMqfojFL0TTzSaGoVTqeXmNt1G4QAnmLccqMUIZdGdI0PXSb9Ol2smYJVXdy0Z23VpuNq7Zgw0zbXDu00w19vTGk7';
+  static Map <String, String> headers = {
+    'Authorization': 'Bearer ${StripeService.secret}',
+    'Content-Type': 'application/x-www-form-urlencoded'
+  };
 
   static init(){
     StripePayment.setOptions(
@@ -34,11 +39,28 @@ class StripeService {
       var paymentMethod = await StripePayment.paymentRequestWithCardForm(
         CardFormPaymentRequest()
       );
-      print(jsonEncode(paymentMethod));
-      return StripeTransactionResponse(
-        message: 'Transaction successful',
-        success: true,
+      var paymentIntent = await StripeService.createPaymentIntent(
+          amount,
+          currency,
       );
+      var response = await StripePayment.confirmPaymentIntent(
+        PaymentIntent(
+          clientSecret: paymentIntent['client_secret'],
+          paymentMethodId: paymentMethod.id,
+        )
+      );
+        if(response.status == 'succeeded') {
+          return StripeTransactionResponse(
+            message: 'Transaction successful',
+            success: true,
+          );
+        }
+        else {
+          return StripeTransactionResponse(
+            message: 'Transaction failed',
+            success: false,
+          );
+        }
     } catch (err) {
       return StripeTransactionResponse(
         message: 'Transaction successful',
@@ -47,7 +69,22 @@ class StripeService {
     }
   }
 
-  static createPaymentIntent(String amount, String currency) async {
-
+  static Future<Map<String, dynamic>> createPaymentIntent(String amount, String currency) async {
+    try {
+      Map <String, dynamic> body = {
+        'amount': amount,
+        'currency': currency,
+        'payment_method_types[]': 'card'
+      };
+      var response = await http.post(
+        StripeService.paymentApiUrl,
+        body: body,
+        headers: StripeService.headers,
+      );
+      return jsonDecode(response.body);
+    } catch (err){
+      print(err.toString());
+    }
+    return null;
   }
 }

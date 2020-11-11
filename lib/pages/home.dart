@@ -11,17 +11,15 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         var response = await StripeService.payWithNewCard(
-          amount: '150',
+          amount: '15000',
           currency: 'USD',
         );
-        if(response.success == true){
-          Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Text(response.message),
-              duration: Duration(milliseconds: 1200),
-            )
-          );
-        }
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            duration: Duration(milliseconds: response.success == true? 1200 : 3000),
+          ),
+        );
         break;
       case 1:
         Navigator.pushNamed(context, '/existing-cards');
