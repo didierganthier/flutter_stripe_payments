@@ -62,12 +62,27 @@ class StripeService {
             success: false,
           );
         }
-    } catch (err) {
+    } on PlatformException catch(err){
+      return StripeService.getPlatformExceptionErrorResult(err);
+    }
+    catch (err) {
       return StripeTransactionResponse(
-        message: 'Transaction failed ${err.toString()}',
+        message: 'Transaction failed $err',
         success: false,
       );
     }
+  }
+
+  static getPlatformExceptionErrorResult(err){
+    String message = "Something went wrong";
+    if(err.code == 'cancelled'){
+      message = "Transaction Cancelled";
+    }
+
+    return new StripeTransactionResponse(
+      message: message,
+      success: false,
+    );
   }
 
   static Future<Map<String, dynamic>> createPaymentIntent(String amount, String currency) async {
