@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:stripe_payment/stripe_payment.dart';
 
@@ -63,8 +64,8 @@ class StripeService {
         }
     } catch (err) {
       return StripeTransactionResponse(
-        message: 'Transaction successful',
-        success: true,
+        message: 'Transaction failed ${err.toString()}',
+        success: false,
       );
     }
   }
