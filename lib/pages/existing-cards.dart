@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_widget.dart';
 import 'package:flutter_stripe_payments/services/payment-service.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ExistingCardsPage extends StatefulWidget {
@@ -27,6 +28,11 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
   ];
 
   payViaExistingCard(BuildContext context, card) async {
+    ProgressDialog dialog = ProgressDialog(context);
+    dialog.style(
+      message: 'Please wait',
+    );
+    await dialog.show();
     var expiryArr = card['expiryDate'].split('/');
     CreditCard stripeCard = CreditCard(
       number: card['cardNumber'],
@@ -38,6 +44,7 @@ class _ExistingCardsPageState extends State<ExistingCardsPage> {
       currency: 'USD',
       card: stripeCard,
     );
+    await dialog.hide();
     Scaffold.of(context)
         .showSnackBar(SnackBar(
           content: Text(response.message),
